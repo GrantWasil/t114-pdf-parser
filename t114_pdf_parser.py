@@ -1,5 +1,8 @@
 import pdfplumber
 import json
+import sys
+import glob
+import traceback
 
 def main():
     """ Main function
@@ -27,6 +30,29 @@ def main():
 
     print("\nDone!")
 
+def get_until_str(text, match_text):
+    """ Get line data as string until string match is hit
+    """
+    data, remaining = get_until(text, match_text)
+    return "".join(data), remaining
+
+def get_until(text, match_text):
+    """ Get line data until string match is hit
+    """
+    data = []
+    remaining = text
+    for i, line in enumerate(text):
+        if match_text in line:
+            i += 1
+            remaining = text[i:]
+            break
+        data.append(line)
+
+    if len(data) < 1:
+        print("No data pulled from get_until with match_text {}. Input text {}".format(match_text, text))
+
+    return data, remaining
+
 
 def parse_pdf(filename):
     """ Parse formatted PDF
@@ -42,7 +68,9 @@ def parse_pdf(filename):
 
     # Add your own parsing here
     # Parse the 'text' string and pull out the info you want put it into the 'info' dictonary
+    text = get_until(text, "Position Name Person ID Address BL DOB M/F Phone")
     print(text)
+
 
     return info
 
